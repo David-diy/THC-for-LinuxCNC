@@ -1,87 +1,179 @@
-/*
- * Arduino-based Torch Height Controller (THC) for Plasma CNC
- * - Designed for LinuxCNC/QtPlasmaC with parallel port breakout board
- * - Voltage-based height control, Arc OK input, Up/Down outputs
- * - Manual/Auto mode with switch
- * - Configurable via code (setpoint, hysteresis)
- */
+#include <LiquidCrystal.h>
 
-// === Pin assignments ===
-const int UP_PIN       = 2;  // Output to BOB "Torch UP"
-const int DOWN_PIN     = 3;  // Output to BOB "Torch DOWN"
-const int ARC_OK_IN    = 4;  // Input from plasma cutter "Arc OK"
-const int ARC_OK_OUT   = 5;  // Output to BOB "Arc OK"
-const int MANUAL_UP    = 6;  // Manual UP button (momentary to GND)
-const int MANUAL_DOWN  = 7;  // Manual DOWN button (momentary to GND)
-const int AUTO_SWITCH  = 8;  // AUTO/MANUAL mode switch (toggle to GND = AUTO)
-const int VOLTAGE_PIN  = A0; // Torch voltage divider input
+// LCD: RS=8, E=9, D4=10, D5=11, D6=12, D7=13
+LiquidCrystal lcd(8, 9, 10, 11, 12, 13);
 
-// === Configurable parameters ===
-const float V_SETPOINT = 120.0;   // Setpoint voltage (adjust to your system)
-const float V_HYST     = 2.5;     // Hysteresis around setpoint (volts)
-const float VOLTAGE_DIVIDER_RATIO = 50.0; // Ratio of divider (ex: 50:1)
-const float ADC_REF    = 5.0;     // Reference voltage for Arduino ADC
-const int   ADC_RES    = 1023;    // 10-bit ADC
+// Button pins (connect one side to digital pin, other to GND)
+#define BTN_RIGHT 2
+#define BTN_UP    3
+#define BTN_DOWN  4
+#define BTN_LEFT  5
+#define BTN_SELECT 6
 
-// === Internal variables ===
-float torch_voltage = 0.0;
-bool arc_ok = false;
-bool auto_mode = false;
+// Menu items
+enum Menu {
+  SET_VOLTAGE, SET_DEADBAND, SET_ZSPEED, SET_RESPONSE,
+  SET_FILTER, SET_MINZ, SET_MAXZ, THC_ENABLE, RESTORE_DEFAULTS, SYSTEM_INFO,
+  N_MENU_ITEMS
+};
+const char* menuLabels[N_MENU_ITEMS] = {
+  "Voltage Setpoint",
+  "Deadband",
+  "Z Speed",
+  "Resp Delay",
+  "Filter",
+  "Min Z",
+  "Max Z",
+  "THC Enable",
+  "Restore Def",
+  "System Info"
+};
 
-// === Helper: read torch voltage ===
-float readTorchVoltage() {
-  int raw = analogRead(VOLTAGE_PIN);
-  float voltage = (raw * ADC_REF / ADC_RES) * VOLTAGE_DIVIDER_RATIO;
-  return voltage;
+// Settings
+float setVoltage = 120.0;
+float deadband = 2.0;
+float zSpeed = 5.0;
+float responseDelay = 0.2;
+int filter = 5;
+int minZ = 0;
+int maxZ = 100;
+bool thcEnabled = true;
+
+// Button logic for digital pins (active LOW)
+enum Button { NONE, RIGHT, UP, DOWN, LEFT, SELECT };
+Button readButton() {
+  if (digitalRead(BTN_RIGHT) == LOW)  return RIGHT;
+  if (digitalRead(BTN_UP)    == LOW)  return UP;
+  if (digitalRead(BTN_DOWN)  == LOW)  return DOWN;
+  if (digitalRead(BTN_LEFT)  == LOW)  return LEFT;
+  if (digitalRead(BTN_SELECT)== LOW)  return SELECT;
+  return NONE;
+}
+
+int menuIndex = 0;
+bool inSubMenu = false;
+bool needRedraw = true;
+
+// Prints the value for submenu (2nd line)
+void printSubValue(int idx) {
+  lcd.setCursor(0,1);
+  lcd.print("                "); // Clear
+  lcd.setCursor(0,1);
+  switch(idx) {
+    case SET_VOLTAGE:   lcd.print("Set: "); lcd.print(setVoltage,1); lcd.print("V "); break;
+    case SET_DEADBAND:  lcd.print("Set: "); lcd.print(deadband,1); lcd.print("V "); break;
+    case SET_ZSPEED:    lcd.print("Set: "); lcd.print(zSpeed,1); lcd.print("mm/s"); break;
+    case SET_RESPONSE:  lcd.print("Set: "); lcd.print(responseDelay,2); lcd.print("s "); break;
+    case SET_FILTER:    lcd.print("Set: "); lcd.print(filter); break;
+    case SET_MINZ:      lcd.print("Set: "); lcd.print(minZ); break;
+    case SET_MAXZ:      lcd.print("Set: "); lcd.print(maxZ); break;
+    case THC_ENABLE:    lcd.print("Set: "); lcd.print(thcEnabled ? "ON " : "OFF"); break;
+    case RESTORE_DEFAULTS: lcd.print("Press SELECT!"); break;
+    case SYSTEM_INFO:   lcd.print("FW 1.0 | By David"); break;
+  }
+}
+
+void drawMenu() {
+  lcd.clear();
+  if (!inSubMenu) {
+    lcd.setCursor(0,0); lcd.print(">"); lcd.print(menuLabels[menuIndex]);
+    lcd.setCursor(0,1); lcd.print("SEL=Edit  ^/v Nav");
+  } else {
+    lcd.setCursor(0,0); lcd.print(menuLabels[menuIndex]);
+    printSubValue(menuIndex);
+    if (menuIndex != RESTORE_DEFAULTS && menuIndex != SYSTEM_INFO) {
+      lcd.setCursor(15,1); lcd.write((byte)0x7E); // right arrow
+    }
+  }
+  needRedraw = false;
 }
 
 void setup() {
-  pinMode(UP_PIN, OUTPUT);
-  pinMode(DOWN_PIN, OUTPUT);
-  pinMode(ARC_OK_OUT, OUTPUT);
-  pinMode(MANUAL_UP, INPUT_PULLUP);
-  pinMode(MANUAL_DOWN, INPUT_PULLUP);
-  pinMode(AUTO_SWITCH, INPUT_PULLUP);
-  pinMode(ARC_OK_IN, INPUT_PULLUP);
-  // Serial.begin(9600); // Uncomment for debugging
+  lcd.begin(16,2);
+  pinMode(BTN_RIGHT, INPUT_PULLUP);
+  pinMode(BTN_UP,    INPUT_PULLUP);
+  pinMode(BTN_DOWN,  INPUT_PULLUP);
+  pinMode(BTN_LEFT,  INPUT_PULLUP);
+  pinMode(BTN_SELECT,INPUT_PULLUP);
+
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("THC Main Menu");
+  lcd.setCursor(0,1);
+  lcd.print("SEL=Edit  ^/v Nav");
+  delay(1000);
+  needRedraw = true;
 }
 
 void loop() {
-  auto_mode = (digitalRead(AUTO_SWITCH) == LOW); // LOW = AUTO mode
-  arc_ok = (digitalRead(ARC_OK_IN) == LOW);      // Adjust if your Arc OK is active high
+  static Button lastButton = NONE;
+  static unsigned long lastDebounce = 0;
+  const unsigned long debounceDelay = 150; // ms
 
-  digitalWrite(ARC_OK_OUT, arc_ok ? HIGH : LOW); // Pass Arc OK to LinuxCNC
+  Button b = readButton();
+  unsigned long now = millis();
 
-  if (!arc_ok) {
-    // Arc not OK: disable up/down
-    digitalWrite(UP_PIN, LOW);
-    digitalWrite(DOWN_PIN, LOW);
-    return;
-  }
-
-  if (auto_mode) {
-    torch_voltage = readTorchVoltage();
-
-    if (torch_voltage < (V_SETPOINT - V_HYST)) {
-      // Torch too low, go UP
-      digitalWrite(UP_PIN, HIGH);
-      digitalWrite(DOWN_PIN, LOW);
-    } else if (torch_voltage > (V_SETPOINT + V_HYST)) {
-      // Torch too high, go DOWN
-      digitalWrite(UP_PIN, LOW);
-      digitalWrite(DOWN_PIN, HIGH);
+  // Only react on transitions: button goes from released to pressed
+  if (b != NONE && lastButton == NONE && (now - lastDebounce) > debounceDelay) {
+    lastDebounce = now;
+    if (!inSubMenu) {
+      // Main menu navigation
+      if (b == UP)   { menuIndex = (menuIndex + N_MENU_ITEMS - 1) % N_MENU_ITEMS; needRedraw = true; }
+      if (b == DOWN) { menuIndex = (menuIndex + 1) % N_MENU_ITEMS; needRedraw = true; }
+      if (b == SELECT) { inSubMenu = true; needRedraw = true; }
     } else {
-      // Within window: do nothing
-      digitalWrite(UP_PIN, LOW);
-      digitalWrite(DOWN_PIN, LOW);
+      // In submenu
+      switch(menuIndex) {
+        case SET_VOLTAGE:
+          if (b == LEFT && setVoltage > 0.5) { setVoltage -= 0.5; needRedraw = true; }
+          if (b == RIGHT && setVoltage < 300) { setVoltage += 0.5; needRedraw = true; }
+          break;
+        case SET_DEADBAND:
+          if (b == LEFT && deadband > 0.1) { deadband -= 0.1; needRedraw = true; }
+          if (b == RIGHT && deadband < 10.0) { deadband += 0.1; needRedraw = true; }
+          break;
+        case SET_ZSPEED:
+          if (b == LEFT && zSpeed > 0.5) { zSpeed -= 0.5; needRedraw = true; }
+          if (b == RIGHT && zSpeed < 50.0) { zSpeed += 0.5; needRedraw = true; }
+          break;
+        case SET_RESPONSE:
+          if (b == LEFT && responseDelay > 0.01) { responseDelay -= 0.01; needRedraw = true; }
+          if (b == RIGHT && responseDelay < 1.0) { responseDelay += 0.01; needRedraw = true; }
+          break;
+        case SET_FILTER:
+          if (b == LEFT && filter>1) { filter--; needRedraw = true; }
+          if (b == RIGHT && filter<99) { filter++; needRedraw = true; }
+          break;
+        case SET_MINZ:
+          if (b == LEFT && minZ>0) { minZ--; needRedraw = true; }
+          if (b == RIGHT && minZ<maxZ-1) { minZ++; needRedraw = true; }
+          break;
+        case SET_MAXZ:
+          if (b == LEFT && maxZ>minZ+1) { maxZ--; needRedraw = true; }
+          if (b == RIGHT && maxZ<200) { maxZ++; needRedraw = true; }
+          break;
+        case THC_ENABLE:
+          if (b == LEFT || b == RIGHT) { thcEnabled = !thcEnabled; needRedraw = true; }
+          break;
+        case RESTORE_DEFAULTS:
+          if (b == SELECT) {
+            setVoltage = 120.0; deadband = 2.0; zSpeed = 5.0; responseDelay = 0.2;
+            filter = 5; minZ = 0; maxZ = 100; thcEnabled = true;
+            needRedraw = true;
+          }
+          break;
+        case SYSTEM_INFO:
+          break;
+      }
+      // Return to main menu (except for restore/defaults which requires SELECT to act)
+      if ((b == SELECT && menuIndex != RESTORE_DEFAULTS && menuIndex != SYSTEM_INFO) ||
+          (b == LEFT && (menuIndex == SYSTEM_INFO || menuIndex == RESTORE_DEFAULTS))) {
+        inSubMenu = false;
+        needRedraw = true;
+      }
     }
-  } else {
-    // Manual mode
-    bool manual_up = (digitalRead(MANUAL_UP) == LOW);
-    bool manual_down = (digitalRead(MANUAL_DOWN) == LOW);
-    digitalWrite(UP_PIN, manual_up ? HIGH : LOW);
-    digitalWrite(DOWN_PIN, manual_down ? HIGH : LOW);
   }
+  lastButton = b;
 
-  delay(20); // debounce, update rate
+  if (needRedraw) drawMenu();
 }
