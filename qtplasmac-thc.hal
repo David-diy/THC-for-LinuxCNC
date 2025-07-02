@@ -1,0 +1,14 @@
+# QtPlasmaC / LinuxCNC HAL for Arduino-based THC
+# (Edit parport pin numbers to match your BOB/LPT wiring)
+
+# THC UP input (e.g., LPT pin 11)
+net plasmac-thc-up     plasmac.thc-up     parport.0.pin-11-in
+
+# THC DOWN input (e.g., LPT pin 12)
+net plasmac-thc-down   plasmac.thc-down   parport.0.pin-12-in
+
+# ARC OK input (e.g., LPT pin 13)
+net plasmac-arc-ok     plasmac.arc-ok-in  parport.0.pin-13-in
+
+# If using a second parallel port, change parport.0 to parport.1, etc.
+# If you use different pins, just substitute the correct -pin-XX-in numbers.
