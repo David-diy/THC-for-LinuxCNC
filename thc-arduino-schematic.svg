@@ -1,164 +1,87 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-  width="900"
-  height="650"
-  viewBox="0 0 900 650"
-  xmlns="http://www.w3.org/2000/svg"
-  style="background:#fff;font-family:sans-serif;font-size:16px"
->
+<svg width="600" height="300" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="background:#fff;font-family:sans-serif">
   <!-- Title -->
-  <text x="30" y="40" font-size="28" font-weight="bold">Arduino UNO THC Schematic for Everlast 80S Plasma</text>
-  <text x="30" y="65" font-size="18" fill="#555">with RC filter, Arc OK relay, opto-isolated relays for BOB</text>
+  <text x="20" y="30" font-size="20" font-weight="bold">Protection & Filter for Arduino A0 (Everlast ~3V)</text>
+  <text x="20" y="55" font-size="13" fill="#555">Series resistor, ceramic capacitor, and TVS diode (all on signal to A0)</text>
 
-  <!-- Arduino UNO -->
-  <rect x="400" y="120" width="150" height="280" rx="15" fill="#e3f2fd" stroke="#2196f3" stroke-width="3"/>
-  <text x="430" y="150" font-size="22" font-weight="bold" fill="#1565c0">Arduino UNO</text>
-  <!-- Pins -->
-  <text x="410" y="185">A0</text>
-  <circle cx="400" cy="180" r="7" fill="#fff" stroke="#2196f3" stroke-width="2"/>
-  <text x="410" y="215">D2 UP</text>
-  <circle cx="400" cy="210" r="7" fill="#fff" stroke="#2196f3" stroke-width="2"/>
-  <text x="410" y="245">D3 DOWN</text>
-  <circle cx="400" cy="240" r="7" fill="#fff" stroke="#2196f3" stroke-width="2"/>
-  <text x="410" y="275">D4 ArcOK IN</text>
-  <circle cx="400" cy="270" r="7" fill="#fff" stroke="#2196f3" stroke-width="2"/>
-  <text x="410" y="305">D5 ArcOK OUT</text>
-  <circle cx="400" cy="300" r="7" fill="#fff" stroke="#2196f3" stroke-width="2"/>
-  <text x="410" y="335">D6 UP BTN</text>
-  <circle cx="400" cy="330" r="7" fill="#fff" stroke="#2196f3" stroke-width="2"/>
-  <text x="410" y="365">D7 DOWN BTN</text>
-  <circle cx="400" cy="360" r="7" fill="#fff" stroke="#2196f3" stroke-width="2"/>
-  <text x="410" y="395">D8 AUTO SW</text>
-  <circle cx="400" cy="390" r="7" fill="#fff" stroke="#2196f3" stroke-width="2"/>
-  <text x="410" y="425">GND</text>
-  <circle cx="400" cy="420" r="7" fill="#fff" stroke="#2196f3" stroke-width="2"/>
+  <!-- Plasma Divider Output -->
+  <rect x="30" y="120" width="90" height="36" rx="7" fill="#ffe0b2" stroke="#e65100" stroke-width="2"/>
+  <text x="40" y="140" font-size="12" fill="#bf360c">Everlast 0-3V</text>
+  <text x="40" y="153" font-size="11" fill="#bf360c">DIV OUT +</text>
+  <circle cx="120" cy="138" r="7" fill="#fff" stroke="#e65100" stroke-width="2"/>
+  <!-- GND -->
+  <circle cx="120" cy="170" r="7" fill="#fff" stroke="#e65100" stroke-width="2"/>
+  <text x="130" y="174" font-size="11" fill="#bf360c">DIV GND</text>
 
-  <!-- Plasma 50:1 Divider -->
-  <rect x="50" y="170" width="130" height="60" rx="10" fill="#ffe0b2" stroke="#e65100" stroke-width="2"/>
-  <text x="60" y="195" font-size="18" fill="#bf360c">Everlast 80S</text>
-  <text x="60" y="215" font-size="14" fill="#bf360c">50:1 DIV OUT</text>
-  <circle cx="180" cy="200" r="6" fill="#fff" stroke="#e65100" stroke-width="2"/>
-  <text x="185" y="205" font-size="14">+ (0-5V)</text>
-  <circle cx="180" cy="220" r="6" fill="#fff" stroke="#e65100" stroke-width="2"/>
-  <text x="185" y="225" font-size="14">GND</text>
+  <!-- Signal wire to resistor -->
+  <line x1="127" y1="138" x2="170" y2="138" stroke="#1976d2" stroke-width="3"/>
+  <!-- Label -->
+  <text x="128" y="132" font-size="11" fill="#1976d2">Signal wire</text>
 
-  <!-- RC Filter -->
-  <rect x="210" y="182" width="70" height="36" rx="8" fill="#f5f5f5" stroke="#666" stroke-width="1"/>
-  <text x="215" y="199" font-size="13">1kΩ</text>
-  <rect x="245" y="210" width="15" height="18" rx="4" fill="#f5f5f5" stroke="#666" stroke-width="1"/>
-  <text x="247" y="223" font-size="12">0.1μF</text>
-  <!-- RC Filter lines -->
-  <line x1="186" y1="200" x2="210" y2="200" stroke="#666" stroke-width="2"/>
-  <line x1="280" y1="200" x2="400" y2="180" stroke="#666" stroke-width="2"/>
-  <line x1="186" y1="220" x2="280" y2="220" stroke="#666" stroke-width="2"/>
-  <line x1="280" y1="220" x2="280" y2="200" stroke="#666" stroke-width="2"/>
+  <!-- 1k Resistor -->
+  <rect x="170" y="128" width="40" height="20" rx="4" fill="#fafafa" stroke="#333" stroke-width="1.5"/>
+  <text x="174" y="143" font-size="13" font-family="monospace" fill="#333">1kΩ</text>
+  <!-- Arrow through resistor -->
+  <line x1="170" y1="138" x2="210" y2="138" stroke="#1976d2" stroke-width="3"/>
 
-  <!-- TVS Diode label -->
-  <rect x="320" y="160" width="55" height="24" rx="5" fill="#f5f5f5" stroke="#d50000" stroke-width="1"/>
-  <text x="325" y="175" font-size="11" fill="#d50000">TVS Diode</text>
-  <line x1="350" y1="180" x2="350" y2="200" stroke="#d50000" stroke-width="2"/>
+  <!-- Node at A0 -->
+  <circle cx="220" cy="138" r="6" fill="#fff" stroke="#1976d2" stroke-width="2"/>
+  <text x="226" y="143" font-size="13" fill="#1976d2">to Arduino A0</text>
 
-  <!-- Arc OK relay box -->
-  <rect x="80" y="260" width="100" height="55" rx="10" fill="#fff3e0" stroke="#e65100" stroke-width="2"/>
-  <text x="95" y="285" font-size="14" fill="#bf360c">Arc OK Relay</text>
-  <circle cx="180" cy="285" r="6" fill="#fff" stroke="#e65100" stroke-width="2"/>
-  <text x="185" y="289" font-size="13">NO</text>
-  <circle cx="180" cy="305" r="6" fill="#fff" stroke="#e65100" stroke-width="2"/>
-  <text x="185" y="309" font-size="13">COM</text>
-  <!-- Arc OK relay to Arduino D4 -->
-  <line x1="186" y1="285" x2="400" y2="270" stroke="#ff9800" stroke-width="2"/>
-  <line x1="186" y1="305" x2="400" y2="420" stroke="#ff9800" stroke-width="2"/>
+  <!-- Capacitor to GND -->
+  <rect x="212" y="155" width="15" height="20" rx="3" fill="#e0f7fa" stroke="#0288d1" stroke-width="1"/>
+  <text x="216" y="170" font-size="11" fill="#0288d1">0.1μF</text>
+  <!-- Wire from A0 down to cap -->
+  <line x1="220" y1="138" x2="220" y2="165" stroke="#0288d1" stroke-width="2"/>
+  <!-- Wire from cap to GND -->
+  <line x1="220" y1="175" x2="220" y2="200" stroke="#0288d1" stroke-width="2"/>
+  <!-- Cap GND label -->
+  <text x="224" y="197" font-size="11" fill="#0288d1">GND</text>
+  <!-- GND symbol -->
+  <line x1="220" y1="200" x2="215" y2="210" stroke="#888" stroke-width="2"/>
+  <line x1="220" y1="200" x2="225" y2="210" stroke="#888" stroke-width="2"/>
+  <line x1="215" y1="210" x2="225" y2="210" stroke="#888" stroke-width="2"/>
 
-  <!-- Manual Buttons and Switches -->
-  <!-- UP BTN -->
-  <rect x="140" y="340" width="60" height="30" rx="7" fill="#e0f7fa" stroke="#00838f" stroke-width="2"/>
-  <text x="146" y="360" font-size="14" fill="#006064">UP BTN</text>
-  <circle cx="180" cy="355" r="5" fill="#fff" stroke="#00838f" stroke-width="1.5"/>
-  <line x1="180" y1="355" x2="400" y2="330" stroke="#00838f" stroke-width="2"/>
-  <line x1="150" y1="355" x2="400" y2="420" stroke="#00838f" stroke-width="2"/>
-  <!-- DOWN BTN -->
-  <rect x="140" y="380" width="60" height="30" rx="7" fill="#e0f7fa" stroke="#00838f" stroke-width="2"/>
-  <text x="143" y="400" font-size="14" fill="#006064">DOWN BTN</text>
-  <circle cx="180" cy="395" r="5" fill="#fff" stroke="#00838f" stroke-width="1.5"/>
-  <line x1="180" y1="395" x2="400" y2="360" stroke="#00838f" stroke-width="2"/>
-  <line x1="150" y1="395" x2="400" y2="420" stroke="#00838f" stroke-width="2"/>
-  <!-- AUTO SW -->
-  <rect x="140" y="420" width="60" height="30" rx="7" fill="#e0f7fa" stroke="#00838f" stroke-width="2"/>
-  <text x="146" y="440" font-size="14" fill="#006064">AUTO SW</text>
-  <circle cx="180" cy="435" r="5" fill="#fff" stroke="#00838f" stroke-width="1.5"/>
-  <line x1="180" y1="435" x2="400" y2="390" stroke="#00838f" stroke-width="2"/>
-  <line x1="150" y1="435" x2="400" y2="420" stroke="#00838f" stroke-width="2"/>
+  <!-- TVS Diode to GND -->
+  <!-- Diode body -->
+  <rect x="250" y="155" width="24" height="12" rx="3" fill="#fff8e1" stroke="#c62828" stroke-width="1.5"/>
+  <!-- Diode text -->
+  <text x="253" y="165" font-size="10" fill="#c62828">TVS</text>
+  <text x="253" y="175" font-size="10" fill="#c62828">5V</text>
+  <!-- Diode anode wire -->
+  <line x1="262" y1="167" x2="262" y2="200" stroke="#c62828" stroke-width="2"/>
+  <line x1="262" y1="200" x2="262" y2="205" stroke="#c62828" stroke-width="2"/>
+  <!-- Diode GND label -->
+  <text x="268" y="197" font-size="11" fill="#c62828">GND</text>
+  <!-- GND symbol -->
+  <line x1="262" y1="205" x2="257" y2="215" stroke="#888" stroke-width="2"/>
+  <line x1="262" y1="205" x2="267" y2="215" stroke="#888" stroke-width="2"/>
+  <line x1="257" y1="215" x2="267" y2="215" stroke="#888" stroke-width="2"/>
+  <!-- Diode cathode stripe -->
+  <rect x="270" y="155" width="4" height="12" fill="#c62828"/>
+  <!-- Diode wire from A0 to cathode -->
+  <line x1="220" y1="138" x2="262" y2="167" stroke="#c62828" stroke-width="2"/>
+  <line x1="266" y1="161" x2="270" y2="161" stroke="#c62828" stroke-width="2"/>
+  <!-- Diode direction label -->
+  <text x="274" y="163" font-size="10" fill="#c62828">stripe</text>
+  <text x="274" y="173" font-size="10" fill="#c62828">→ A0</text>
+  <text x="292" y="172" font-size="10" fill="#c62828">(cathode)</text>
 
-  <!-- Opto-Isolated Relays -->
-  <!-- UP Relay -->
-  <rect x="650" y="180" width="110" height="40" rx="8" fill="#fffde7" stroke="#ffc107" stroke-width="2"/>
-  <text x="660" y="205" font-size="15" fill="#ff6f00">UP Relay</text>
-  <circle cx="650" cy="200" r="7" fill="#fff" stroke="#ffc107" stroke-width="2"/>
-  <text x="635" y="196" font-size="12">IN</text>
-  <circle cx="760" cy="190" r="7" fill="#fff" stroke="#ffc107" stroke-width="2"/>
-  <text x="770" y="194" font-size="12">NO</text>
-  <circle cx="760" cy="210" r="7" fill="#fff" stroke="#ffc107" stroke-width="2"/>
-  <text x="770" y="214" font-size="12">COM</text>
-  <!-- D2 to UP Relay IN -->
-  <line x1="550" y1="210" x2="650" y2="200" stroke="#ffc107" stroke-width="2"/>
-  <!-- D2 from Arduino -->
-  <line x1="550" y1="210" x2="400" y2="210" stroke="#ffc107" stroke-width="2"/>
-  <!-- NO to BOB UP -->
-  <rect x="800" y="175" width="70" height="30" rx="6" fill="#ede7f6" stroke="#512da8" stroke-width="2"/>
-  <text x="810" y="195" font-size="13" fill="#512da8">BOB UP</text>
-  <line x1="767" y1="190" x2="800" y2="190" stroke="#512da8" stroke-width="2"/>
-  <!-- COM to BOB GND -->
-  <rect x="800" y="210" width="70" height="30" rx="6" fill="#ede7f6" stroke="#512da8" stroke-width="2"/>
-  <text x="810" y="230" font-size="13" fill="#512da8">BOB GND</text>
-  <line x1="767" y1="210" x2="800" y2="225" stroke="#512da8" stroke-width="2"/>
-
-  <!-- DOWN Relay -->
-  <rect x="650" y="250" width="110" height="40" rx="8" fill="#fffde7" stroke="#ffc107" stroke-width="2"/>
-  <text x="660" y="275" font-size="15" fill="#ff6f00">DOWN Relay</text>
-  <circle cx="650" cy="270" r="7" fill="#fff" stroke="#ffc107" stroke-width="2"/>
-  <text x="635" y="266" font-size="12">IN</text>
-  <circle cx="760" cy="260" r="7" fill="#fff" stroke="#ffc107" stroke-width="2"/>
-  <text x="770" y="264" font-size="12">NO</text>
-  <circle cx="760" cy="280" r="7" fill="#fff" stroke="#ffc107" stroke-width="2"/>
-  <text x="770" y="284" font-size="12">COM</text>
-  <!-- D3 to DOWN Relay IN -->
-  <line x1="550" y1="240" x2="650" y2="270" stroke="#ffc107" stroke-width="2"/>
-  <!-- D3 from Arduino -->
-  <line x1="550" y1="240" x2="400" y2="240" stroke="#ffc107" stroke-width="2"/>
-  <!-- NO to BOB DOWN -->
-  <rect x="800" y="245" width="70" height="30" rx="6" fill="#ede7f6" stroke="#512da8" stroke-width="2"/>
-  <text x="810" y="265" font-size="13" fill="#512da8">BOB DOWN</text>
-  <line x1="767" y1="260" x2="800" y2="260" stroke="#512da8" stroke-width="2"/>
-  <!-- COM to BOB GND -->
-  <line x1="767" y1="280" x2="800" y2="260" stroke="#512da8" stroke-width="2"/>
-
-  <!-- ArcOK Relay -->
-  <rect x="650" y="320" width="110" height="40" rx="8" fill="#fffde7" stroke="#ffc107" stroke-width="2"/>
-  <text x="660" y="345" font-size="15" fill="#ff6f00">ArcOK Relay</text>
-  <circle cx="650" cy="340" r="7" fill="#fff" stroke="#ffc107" stroke-width="2"/>
-  <text x="635" y="336" font-size="12">IN</text>
-  <circle cx="760" cy="330" r="7" fill="#fff" stroke="#ffc107" stroke-width="2"/>
-  <text x="770" y="334" font-size="12">NO</text>
-  <circle cx="760" cy="350" r="7" fill="#fff" stroke="#ffc107" stroke-width="2"/>
-  <text x="770" y="354" font-size="12">COM</text>
-  <!-- D5 to ArcOK Relay IN -->
-  <line x1="550" y1="300" x2="650" y2="340" stroke="#ffc107" stroke-width="2"/>
-  <!-- D5 from Arduino -->
-  <line x1="550" y1="300" x2="400" y2="300" stroke="#ffc107" stroke-width="2"/>
-  <!-- NO to BOB ArcOK -->
-  <rect x="800" y="315" width="70" height="30" rx="6" fill="#ede7f6" stroke="#512da8" stroke-width="2"/>
-  <text x="810" y="335" font-size="13" fill="#512da8">BOB ArcOK</text>
-  <line x1="767" y1="330" x2="800" y2="330" stroke="#512da8" stroke-width="2"/>
-  <!-- COM to BOB GND -->
-  <line x1="767" y1="350" x2="800" y2="330" stroke="#512da8" stroke-width="2"/>
+  <!-- GND wire from divider -->
+  <line x1="127" y1="170" x2="220" y2="200" stroke="#777" stroke-width="2" stroke-dasharray="4,3"/>
+  <text x="148" y="194" font-size="11" fill="#777">All GNDs joined</text>
 
   <!-- Legend -->
-  <rect x="610" y="400" width="260" height="140" rx="15" fill="#fafafa" stroke="#bbb" stroke-width="1"/>
-  <text x="620" y="425" font-size="15" font-weight="bold">Legend</text>
-  <text x="625" y="445" font-size="13">Blue: Manual controls (buttons/switch)</text>
-  <text x="625" y="465" font-size="13">Orange: Plasma cutter signals</text>
-  <text x="625" y="485" font-size="13">Yellow: Relay modules (opto-isolated)</text>
-  <text x="625" y="505" font-size="13">Purple: Connections to BOB</text>
-  <text x="625" y="525" font-size="13">Red: TVS diode (surge protection)</text>
-  <text x="625" y="545" font-size="13">Gray: RC filter (noise filter)</text>
+  <rect x="360" y="60" width="210" height="108" rx="10" fill="#fafafa" stroke="#bbb" stroke-width="1"/>
+  <text x="370" y="80" font-size="13" font-weight="bold">Legend</text>
+  <rect x="370" y="92" width="12" height="12" fill="#fafafa" stroke="#333" stroke-width="1.5"/>
+  <text x="388" y="102" font-size="12">1kΩ resistor</text>
+  <rect x="370" y="112" width="12" height="12" fill="#e0f7fa" stroke="#0288d1" stroke-width="1"/>
+  <text x="388" y="122" font-size="12">0.1μF capacitor</text>
+  <rect x="370" y="132" width="12" height="12" fill="#fff8e1" stroke="#c62828" stroke-width="1.5"/>
+  <text x="388" y="142" font-size="12">TVS diode (stripe = cathode, A0)</text>
+  <line x1="370" y1="155" x2="382" y2="155" stroke="#1976d2" stroke-width="3"/>
+  <text x="388" y="158" font-size="12">Signal wire</text>
+  <line x1="370" y1="172" x2="382" y2="172" stroke="#777" stroke-width="2" stroke-dasharray="4,3"/>
+  <text x="388" y="175" font-size="12">GND wire</text>
 </svg>
