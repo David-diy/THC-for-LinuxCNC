@@ -17,10 +17,10 @@ enum Menu {
   N_MENU_ITEMS
 };
 const char* menuLabels[N_MENU_ITEMS] = {
-  "Voltage Setpoint",
+  "Volt Setpoint",
   "Deadband",
   "Z Speed",
-  "Resp Delay",
+  "Response Delay",
   "Filter",
   "Min Z",
   "Max Z",
@@ -69,7 +69,7 @@ void printSubValue(int idx) {
     case SET_MAXZ:      lcd.print("Set: "); lcd.print(maxZ); break;
     case THC_ENABLE:    lcd.print("Set: "); lcd.print(thcEnabled ? "ON " : "OFF"); break;
     case RESTORE_DEFAULTS: lcd.print("Press SELECT!"); break;
-    case SYSTEM_INFO:   lcd.print("FW 1.0 | By David"); break;
+    case SYSTEM_INFO:   lcd.print("FW 1.0 By David"); break;
   }
 }
 
@@ -101,7 +101,7 @@ void setup() {
   lcd.print("THC Main Menu");
   lcd.setCursor(0,1);
   lcd.print("SEL=Edit  ^/v Nav");
-  delay(1000);
+  delay(3000);
   needRedraw = true;
 }
 
